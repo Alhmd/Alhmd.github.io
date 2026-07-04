@@ -342,6 +342,33 @@ main .section:nth-of-type(6) .tag { color: var(--green);  background: var(--gree
 .tag-amber  { color: var(--amber); }
 .tag-teal   { color: var(--teal); }
 
+.project-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 18px;
+}
+.project-action-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: opacity 0.18s;
+}
+.project-action-btn:hover { opacity: 0.85; }
+.project-action-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.18s, border-color 0.18s;
+}
+.project-action-link:hover { color: var(--accent); border-color: var(--accent); }
+
 .project-card:hover { border-color: var(--accent); }
 .project-card:has(.icon-coral):hover  { border-color: var(--coral); }
 .project-card:has(.icon-violet):hover { border-color: var(--violet); }

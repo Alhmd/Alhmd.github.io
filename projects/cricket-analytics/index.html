@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE CODE — Cricket Analytics</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #0f0f0f;
+  --bg2:    #111111;
+  --bg3:    #181818;
+  --bd:     #242424;
+  --text:   #e8e8e8;
+  --muted:  #666666;
+  --gold:   #ffd166;
+  --edge:   #06d6a0;
+  --font:   'Courier New', Courier, monospace;
+  --pc:     #e63946;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ─── LAYOUT ────────────────────────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-columns: 265px 1fr;
+  height: 100vh;
+}
+
+/* ─── SIDEBAR ───────────────────────────────────────────────── */
+.sidebar {
+  background: var(--bg2);
+  border-right: 1px solid var(--bd);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sb-hdr {
+  padding: 14px 12px 10px;
+  background: #0a0a0a;
+  border-bottom: 1px solid var(--bd);
+  flex-shrink: 0;
+}
+
+.sb-hdr-title {
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  color: var(--text);
+}
+
+.sb-hdr-sub {
+  font-size: 6.5px;
+  color: var(--muted);
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+.sb-hdr-count {
+  font-size: 7px;
+  color: var(--pc);
+  margin-top: 7px;
+  letter-spacing: 1px;
+  transition: color 0.3s;
+}
+
+.sb-search {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--bd);
+  flex-shrink: 0;
+}
+
+.sb-search input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--bd);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 8px;
+  padding: 5px 8px;
+  letter-spacing: 0.5px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.sb-search input:focus { border-color: var(--pc); }
+.sb-search input::placeholder { color: #444; }
+
+.sb-filters {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.fb {
+  background: var(--bg3);
+  border: 1px solid var(--bd);
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 6.5px;
+  padding: 3px 8px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+
+.fb:hover { color: var(--text); border-color: #444; }
+
+.fb.active {
+  color: var(--text);
+  border-color: var(--pc);
+  background: rgba(255,255,255,0.04);
+}
+
+.sb-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #2a2a2a #111;
+}
+
+.sb-list::-webkit-scrollbar { width: 4px; }
+.sb-list::-webkit-scrollbar-track { background: #111; }
+.sb-list::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+
+.sb-grp {
+  font-size: 5.8px;
+  color: #333;
+  letter-spacing: 2px;
+  padding: 8px 4px 3px;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  border-left: 2.5px solid var(--ic);
+  border-top: 1px solid transparent;
+  border-right: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  margin-bottom: 2px;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.sb-item:hover {
+  background: rgba(255,255,255,0.03);
+  border-top-color: var(--ic);
+  border-right-color: var(--ic);
+  border-bottom-color: var(--ic);
+}
+
+.sb-item.active {
+  background: rgba(255,255,255,0.06);
+  border-top-color: var(--ic);
+  border-right-color: var(--ic);
+  border-bottom-color: var(--ic);
+}
+
+.sb-item.hidden { display: none; }
+
+.sb-name {
+  font-size: 8px;
+  font-weight: bold;
+  letter-spacing: 0.3px;
+  color: var(--text);
+  flex: 1;
+  line-height: 1.3;
+}
+
+.sb-badge {
+  font-size: 5.5px;
+  padding: 1px 4px;
+  border: 1px solid;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.bd-lh     { color: #7fb3ff; border-color: #7fb3ff; background: rgba(127,179,255,0.08); }
+.bd-spin   { color: #c77dff; border-color: #c77dff; background: rgba(199,125,255,0.08); }
+.bd-short  { color: #ff9966; border-color: #ff9966; background: rgba(255,153,102,0.08); }
+.bd-weapon { border-color: var(--ic); color: var(--ic); background: rgba(255,255,255,0.03); }
+
+.kb-hint {
+  font-size: 5.5px;
+  color: #2a2a2a;
+  text-align: center;
+  padding: 4px;
+  border-top: 1px solid var(--bd);
+  background: #0a0a0a;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+/* ─── MAIN ──────────────────────────────────────────────────── */
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-hdr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--bd);
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+
+.main-hdr-title { flex: 1; min-width: 0; }
+
+.mh-name {
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: var(--text);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mh-sub {
+  font-size: 8.5px;
+  color: var(--pc);
+  margin-top: 5px;
+  letter-spacing: 0.3px;
+  transition: color 0.3s;
+}
+
+.mh-badges {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.mh-badge {
+  font-size: 6.5px;
+  padding: 3px 8px;
+  border: 1px solid;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.mhb-weapon { color: var(--pc); border-color: var(--pc); background: rgba(255,255,255,0.03); }
+.mhb-lh     { color: #7fb3ff; border-color: #7fb3ff; background: rgba(127,179,255,0.06); }
+.mhb-rh     { color: #88bb88; border-color: #88bb88; background: rgba(136,187,136,0.06); }
+.mhb-spin   { color: #c77dff; border-color: #c77dff; background: rgba(199,125,255,0.06); }
+.mhb-short  { color: #ff9966; border-color: #ff9966; background: rgba(255,153,102,0.06); }
+
+.nav-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  background: var(--bg3);
+  border: 1px solid var(--bd);
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 7.5px;
+  padding: 5px 12px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+}
+
+.nav-btn:hover { border-color: var(--pc); color: var(--text); }
+
+.nav-count {
+  font-size: 7.5px;
+  color: var(--muted);
+  min-width: 42px;
+  text-align: center;
+}
+
+/* Image area */
+.img-area {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.img-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  transition: background 0.4s;
+}
+
+#player-img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.18s;
+  padding: 6px;
+}
+
+#player-img.fade { opacity: 0; }
+
+/* Info strip */
+.info-strip {
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-top: 1px solid var(--bd);
+}
+
+.info-row1 {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr 1.8fr 2fr;
+  border-bottom: 1px solid var(--bd);
+}
+
+.icell {
+  padding: 8px 12px;
+  border-right: 1px solid var(--bd);
+}
+
+.icell:last-child { border-right: none; }
+
+.ilbl {
+  font-size: 5.5px;
+  color: #3a3a3a;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.ilbl.mt { margin-top: 5px; }
+
+.ival {
+  font-size: 7.5px;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.ival.pc-col { color: var(--pc); transition: color 0.3s; }
+.ival.gray   { color: #666; }
+.ival.gold   { color: var(--gold); }
+.ival.edge   { color: var(--edge); }
+
+.info-row2 {
+  padding: 7px 12px;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.ir2-lbl {
+  font-size: 5.5px;
+  color: #3a3a3a;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ir2-text {
+  font-size: 7.5px;
+  color: #888;
+  line-height: 1.55;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="sb-hdr">
+      <div class="sb-hdr-title">THE CODE</div>
+      <div class="sb-hdr-sub">HOW BOWLERS CRACK GREAT BATSMEN · AND HOW THEY FIGHT BACK</div>
+      <div class="sb-hdr-count" id="sb-count">17 PLAYER STUDIES</div>
+    </div>
+
+    <div class="sb-search">
+      <input type="text" id="search" placeholder="SEARCH PLAYER..." autocomplete="off" spellcheck="false">
+    </div>
+
+    <div class="sb-filters" id="sb-filters"></div>
+
+    <div class="sb-list" id="sb-list"></div>
+
+    <div class="kb-hint">← → ARROW KEYS · CLICK TO SELECT</div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+
+    <div class="main-hdr">
+      <div class="main-hdr-title">
+        <div class="mh-name" id="mh-name">—</div>
+        <div class="mh-sub"  id="mh-sub">—</div>
+      </div>
+      <div class="mh-badges" id="mh-badges"></div>
+      <div class="nav-ctrl">
+        <button class="nav-btn" id="prev-btn">← PREV</button>
+        <span class="nav-count" id="nav-count">— / 17</span>
+        <button class="nav-btn" id="next-btn">NEXT →</button>
+      </div>
+    </div>
+
+    <div class="img-area">
+      <div class="img-glow" id="img-glow"></div>
+      <img id="player-img" src="" alt="Player Analysis">
+    </div>
+
+    <div class="info-strip">
+      <div class="info-row1">
+
+        <div class="icell">
+          <div class="ilbl">BOWLER(S)</div>
+          <div class="ival pc-col" id="i-bowler"></div>
+          <div class="ilbl mt">SERIES</div>
+          <div class="ival gray" id="i-series"></div>
+        </div>
+
+        <div class="icell">
+          <div class="ilbl">BATS</div>
+          <div class="ival" id="i-hand"></div>
+          <div class="ilbl mt">THREAT</div>
+          <div class="ival" id="i-threat" style="color:#888"></div>
+        </div>
+
+        <div class="icell">
+          <div class="ilbl">KEY STAT</div>
+          <div class="ival gold" id="i-stat"></div>
+        </div>
+
+        <div class="icell">
+          <div class="ilbl">ADAPTATION</div>
+          <div class="ival edge" id="i-adapt"></div>
+        </div>
+
+      </div>
+      <div class="info-row2">
+        <div class="ir2-lbl">ANALYSIS</div>
+        <div class="ir2-text" id="i-analysis"></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ── PLAYER DATA ─────────────────────────────────────────────── */
+const PLAYERS = [
+  {
+    id: 'virat_kohli',
+    name: 'VIRAT KOHLI',
+    sub: 'The Off-Stump Corridor Trap',
+    bowler: 'Anderson · Broad · Tremlett',
+    series: 'England Tour 2014',
+    threat: 'SEAM / OUTSWING',
+    keyStat: 'Avg 13.40 in 2014 England series · 10 wkts in 5 Tests',
+    adapt: 'Dropped drive trigger · Avg 55.10 on England return 2018',
+    analysis: 'Back-of-length angling away at 4th–5th stump. Early drive trigger → hands moved away from body → thick outside edge → slip cordon. The length and line exploited his natural instinct to play the ball through the off side.',
+    color: '#e63946',
+    hand: 'RH',
+    tags: ['rh', 'seam'],
+    weapon: false,
+    file: 'virat_kohli.png'
+  },
+  {
+    id: 'harry_brook',
+    name: 'HARRY BROOK',
+    sub: 'Keeper Up — Short-of-Length Squeeze',
+    bowler: 'Cummins · Hazlewood · Starc',
+    series: 'Ashes / SA Tests 2025–26',
+    threat: 'SEAM / SHORT BALL',
+    keyStat: 'Avg ~18 when keeper up (Aus 2025) · Dropped from Tests',
+    adapt: 'Still unresolved — dropped from England XI late 2025',
+    analysis: 'Short-of-length into the body. Brook plays across the line or top-edges the pull. Keeper up removes back-foot escape → stumped, caught behind, or bat-pad. The tactic neutralised his aggressive instincts by taking away the pull shot option.',
+    color: '#f4a261',
+    hand: 'RH',
+    tags: ['rh', 'seam', 'short'],
+    weapon: false,
+    file: 'harry_brook.png'
+  },
+  {
+    id: 'steve_smith',
+    name: 'STEVE SMITH',
+    sub: 'Good-Length Seam Channel (NOT Inswing)',
+    bowler: 'Anderson · Broad · Robinson',
+    series: 'England 2019–23',
+    threat: 'SEAM / LATE MOVEMENT',
+    keyStat: 'Avg 23 vs seam channel in England conditions (last 5 summers)',
+    adapt: 'Ongoing — still returns vs rotation bowlers',
+    analysis: 'Good-length seam channel 3rd–4th stump in English conditions. Unconventional backlift & leg-side guard → outside edge clips cordon. Dominates inswing (avg 92 at home). Seam away is the threat. The key is pitching it in that 6.0–9.0 metre corridor where his backlift leaves the outside edge exposed.',
+    color: '#ffd166',
+    hand: 'RH',
+    tags: ['rh', 'seam'],
+    weapon: false,
+    file: 'steve_smith.png'
+  },
+  {
+    id: 'rohit_sharma',
+    name: 'ROHIT SHARMA',
+    sub: 'Full Inswing — Front-Foot LBW Trap',
+    bowler: 'Anderson · Broad · Curran',
+    series: 'England Tours / BGT 2024',
+    threat: 'SEAM / INSWING',
+    keyStat: 'Avg 10.93 in England 2021 · LBW 4 times in the series',
+    adapt: 'Improved WTC 2023 but regressed badly in BGT 2024',
+    analysis: 'Full inswing from outside off swinging back into the pads. Rohit commits front foot early → misses/plays around swing → LBW or bowled. Also leg-side catchers when he miscues the flick. His early weight transfer against the moving ball is the structural flaw.',
+    color: '#06d6a0',
+    hand: 'RH',
+    tags: ['rh', 'seam'],
+    weapon: false,
+    file: 'rohit_sharma.png'
+  },
+  {
+    id: 'shubman_gill',
+    name: 'SHUBMAN GILL',
+    sub: 'Inswing & Nip-Back — Bat-Pad Gap',
+    bowler: 'Anderson · Broad · Woakes',
+    series: 'England 2021 / WTC Final 2023',
+    threat: 'SEAM / INSWING',
+    keyStat: 'Avg 9.5 in England 2021 · Dismissed 4 times by swing bowlers',
+    adapt: 'Tightened gap — 112 in WTC 2023 final (improved technique)',
+    analysis: 'Full-to-good-length inswing (off-to-middle) finds the bat-pad gap — ball sneaks between bat and front pad. Caught at short leg / bat-pad. Nip-back from middle also catches inside edge onto stumps. The gap between bat and pad is the target; closing it has been an ongoing technical project.',
+    color: '#4361ee',
+    hand: 'RH',
+    tags: ['rh', 'seam'],
+    weapon: false,
+    file: 'shubman_gill.png'
+  },
+  {
+    id: 'aaron_finch',
+    name: 'AARON FINCH',
+    sub: 'Full Inswing — LBW & Bowled',
+    bowler: 'Anderson · Broad · Woakes · Curran',
+    series: 'England Tests 2018–19',
+    threat: 'SEAM / INSWING',
+    keyStat: 'Test avg 27.3 · Most dismissals LBW / bowled (inswing)',
+    adapt: 'Retired from Tests 2021 — never resolved it',
+    analysis: 'Full inswing from around-the-wicket to a right-hander. Finch played across the line to the full inswinger → missed straight ball → LBW or bowled. Low Test avg 27.3 career — inswing was the core reason. His instinct to play the ball to leg left him completely exposed to swing back into the stumps.',
+    color: '#7209b7',
+    hand: 'RH',
+    tags: ['rh', 'seam'],
+    weapon: false,
+    file: 'aaron_finch.png'
+  },
+  {
+    id: 'alastair_cook',
+    name: 'ALASTAIR COOK',
+    sub: "Ashwin's Off-Spin — The Left-Hander's Nightmare",
+    bowler: 'R. Ashwin',
+    series: 'India 2012 / 2016 / England 2016',
+    threat: 'OFF-SPIN (ASHWIN)',
+    keyStat: "Dismissed by Ashwin 7 times in Tests — clear bunny",
+    adapt: 'Never fully solved it — retired 2018',
+    analysis: "Ashwin's off-break pitches middle/off for a left-hander and turns sharply into the body or through the bat-pad gap. Cook's method of playing close to the pad left him vulnerable to LBW and bat-pad catches. The carom ball that held its line also claimed him repeatedly in the series.",
+    color: '#e63946',
+    hand: 'LH',
+    tags: ['lh', 'spin'],
+    weapon: false,
+    file: 'alastair_cook.png'
+  },
+  {
+    id: 'ben_stokes',
+    name: 'BEN STOKES',
+    sub: 'Ashwin & Off-Spin Through the Gate',
+    bowler: 'R. Ashwin · N. Lyon',
+    series: 'India 2016 / Ashes 2017',
+    threat: 'OFF-SPIN (ASHWIN)',
+    keyStat: 'Dismissed by Ashwin 6 times in Tests',
+    adapt: 'More disciplined 2021 onwards — improved record vs spin',
+    analysis: "Ashwin drew Stokes into the drive: off-spin turning back through the gate or finding the bat-pad gap. Stokes often drove at balls he should have left — inside edge onto pads/stumps or bat-pad catch at short leg. His aggressive temperament was weaponised against him.",
+    color: '#f77f00',
+    hand: 'LH',
+    tags: ['lh', 'spin'],
+    weapon: false,
+    file: 'ben_stokes.png'
+  },
+  {
+    id: 'david_warner',
+    name: 'DAVID WARNER',
+    sub: "Ashwin's Biggest Bunny — Left-Hander",
+    bowler: 'R. Ashwin',
+    series: 'India Tests 2017 / 2021 / 2023',
+    threat: 'OFF-SPIN (ASHWIN)',
+    keyStat: "Dismissed by Ashwin 10 times in Tests — most of any bowler vs Warner",
+    adapt: "Never solved it — retired from Tests Jan 2024, record intact",
+    analysis: "Warner's aggressive method — going hard at anything in the hitting zone — made him vulnerable to the quicker through-the-air off-break and the ball that did just enough. Dismissed caught slip, bat-pad, and LBW repeatedly. Ashwin publicly called him his bunny, and the numbers backed it up emphatically.",
+    color: '#f4d03f',
+    hand: 'LH',
+    tags: ['lh', 'spin'],
+    weapon: false,
+    file: 'david_warner.png'
+  },
+  {
+    id: 'suresh_raina',
+    name: 'SURESH RAINA',
+    sub: 'Short Ball — The Gap That Ended His Test Career',
+    bowler: 'M. Johnson · S. Finn · M. Morkel',
+    series: 'England 2011 / Aus 2013–14',
+    threat: 'SHORT BALL (PACE)',
+    keyStat: 'Avg 25.83 in Aus/SA · Johnson & Finn dismissed him 5 times each (ODIs)',
+    adapt: 'Never solved it in Tests — never recalled after 2011 England series',
+    analysis: "Short-pitched pace aimed at chest/shoulder height. Raina had no answer — would duck, sway, or play a 'nothing shot' away from the body. Johnson dismissed him twice in 4 innings (Aus 2013–14). Averaged 25.83 in Australia & South Africa combined. Dropped from Tests after 2011 England tour — 27 runs in 7 innings including a 29-ball duck.",
+    color: '#48cae4',
+    hand: 'LH',
+    tags: ['lh', 'seam', 'short'],
+    weapon: false,
+    file: 'suresh_raina.png'
+  },
+  {
+    id: 'shreyas_iyer',
+    name: 'SHREYAS IYER',
+    sub: 'Short Ball — Express Pace Into the Body',
+    bowler: 'Cummins · Hazlewood · Bumrah',
+    series: 'BGT 2020–21 / IPL 2024–26',
+    threat: 'SHORT BALL (PACE)',
+    keyStat: 'Dismissed 2x on high-pace short ball in 4 innings (IPL 2026)',
+    adapt: 'Wider stance + backward trigger (Apr 2025) — partial improvement',
+    analysis: 'High-pace short ball (>144 km/h) angled into the body. Dismissed twice on high-pace short balls in just 4 IPL 2026 innings. Technical fix: wider stance + backward trigger movement (Wisden Apr 2025) has improved his pull — but dismissal risk remains at the highest pace. The quicker bouncers still expose his hand-eye reaction time.',
+    color: '#9b5de5',
+    hand: 'RH',
+    tags: ['rh', 'seam', 'short'],
+    weapon: false,
+    file: 'shreyas_iyer.png'
+  },
+  {
+    id: 'yashasvi_jaiswal',
+    name: 'YASHASVI JAISWAL',
+    sub: 'The Cut Shot Itch — Width vs Control',
+    bowler: 'N. Burger · M. Starc · M. Jansen',
+    series: 'SA 2023 / BGT 2024–25 / SA Tests Nov 2025',
+    threat: 'SEAM / CUT SHOT',
+    keyStat: 'Avg 21.75 vs left-arm pace (8 dismissals) · Control % drops 90→71 mid-innings',
+    adapt: 'Nets with left-arm throwdown (Guwahati, Nov 2025) — process started',
+    analysis: "Cuts hard regardless of line & length. Head falls across outside off during trigger → loses sight of ball after pitching → commits to cut on balls too close to body. 8 dismissals at avg 21.75 vs left-arm pacers. 6 dismissals via cut shot career-total but 390 runs scored with it — high risk, high reward profile that bowlers exploit late in innings.",
+    color: '#ff6b9d',
+    hand: 'LH',
+    tags: ['lh', 'seam'],
+    weapon: false,
+    file: 'yashasvi_jaiswal.png'
+  },
+  {
+    id: 'michael_atherton',
+    name: 'MICHAEL ATHERTON',
+    sub: 'The Mega-Bunny — Five Elite Bowlers, Same Answer',
+    bowler: 'McGrath · Warne · Walsh · Ambrose · Donald',
+    series: 'Career 1989–2001',
+    threat: 'SEAM + SPIN (ALL)',
+    keyStat: 'McGrath dismissed him 19 times — the all-time Test bunny record',
+    adapt: 'Relied on survival rather than solving — pure grit',
+    analysis: "McGrath found the seam-away off good length (19 dismissals — the all-time Test record for a bowler-batsman pair). Walsh/Ambrose used relentless off-stump accuracy. Warne span him. Donald yorked him with reverse. Common thread: sustained accuracy + late movement at the last moment. Atherton's answer was simply to refuse to give up.",
+    color: '#48cae4',
+    hand: 'RH',
+    tags: ['rh', 'seam'],
+    weapon: false,
+    file: 'michael_atherton.png'
+  },
+  {
+    id: 'andrew_strauss',
+    name: 'ANDREW STRAUSS',
+    sub: "Shane Warne's Leg-Spin — The 2005 Edgbaston Ball",
+    bowler: 'Shane Warne',
+    series: 'Ashes 2005 / 2006–07',
+    threat: 'LEG-SPIN (WARNE)',
+    keyStat: 'Dismissed by Warne 10 times in Tests',
+    adapt: 'Played spin better post-2006 — partially solved',
+    analysis: "Warne targeted Strauss with leg-spin pitching middle/leg, turning sharply. As a left-hander, the ball coming from round the wicket created a difficult angle. The famous 2005 Edgbaston delivery turned a foot out of rough. Caught slip or behind when the ball straightened more than expected. Warne repeatedly drew him into the drive with the arm ball.",
+    color: '#9b5de5',
+    hand: 'LH',
+    tags: ['lh', 'spin'],
+    weapon: false,
+    file: 'andrew_strauss.png'
+  },
+  {
+    id: 'ricky_ponting',
+    name: 'RICKY PONTING',
+    sub: 'Harbhajan Singh — Off-Spin Through the Gate',
+    bowler: 'Harbhajan Singh',
+    series: 'India 2001 / 2004 / 2007–08',
+    threat: 'OFF-SPIN (HARBHAJAN)',
+    keyStat: "Dismissed by Harbhajan 14 times — India's 2001 miracle hero",
+    adapt: 'Partial — still succumbed in 2007–08 India series',
+    analysis: "Harbhajan's off-spin and doosra posed unique problems for Ponting's front-foot dominant style. His tendency to drive through the off side left him exposed to balls turning back through the gate or finding the edge. Harbhajan dismissed him repeatedly in series Australia should have won — a key reason India pulled off one of cricket's great upsets in 2001.",
+    color: '#f72585',
+    hand: 'RH',
+    tags: ['rh', 'spin'],
+    weapon: false,
+    file: 'ricky_ponting.png'
+  },
+  {
+    id: 'wasim_akram',
+    name: 'WASIM AKRAM',
+    sub: 'The Sultan of Swing — Reverse-Inswing Yorker',
+    bowler: 'WEAPON CARD',
+    series: '1992–2002 · ODI & Test',
+    threat: 'REVERSE SWING YORKER',
+    keyStat: '414 Test wkts · 502 ODI wkts · Victims: Laxman, Slater, G. Smith',
+    adapt: 'N/A — this is the weapon, not the weakness',
+    analysis: "Left-arm fast. Reverse-swing late inswing yorker starting on off stump, reversing violently into the boot. Right-handers had no time to adjust. Laxman, Slater, and Graeme Smith confirmed yorker victims. The Sultan of Swing — the greatest left-arm pacer in history. His ability to swing old ball both ways made him lethal in every phase of the game.",
+    color: '#2dc653',
+    hand: 'LH',
+    tags: ['weapon'],
+    weapon: true,
+    file: 'wasim_akram.png'
+  },
+  {
+    id: 'lasith_malinga',
+    name: 'LASITH MALINGA',
+    sub: '"Slinga Malinga" — The Unstoppable Yorker',
+    bowler: 'WEAPON CARD',
+    series: '2004–2019 · ODI / T20I / IPL',
+    threat: 'SLING YORKER / SWING',
+    keyStat: '338 ODI wkts · 107 T20I wkts · 170 IPL wkts (all-time leader)',
+    adapt: 'N/A — this is the weapon, not the weakness',
+    analysis: "Round-arm sling action → low release point → batters pick up length late. Late prodigious swing both ways. Slower-ball yorker variant made even the 144 km/h yorker less predictable. Death-overs: 90 IPL wickets, SR 7.39 — fastest striker at death among all 32 high-volume IPL bowlers. 4 wickets in 4 balls TWICE (2007 WC & 2019 T20I).",
+    color: '#ff9f1c',
+    hand: 'RH',
+    tags: ['weapon'],
+    weapon: true,
+    file: 'lasith_malinga.png'
+  }
+];
+
+/* ── STATE ───────────────────────────────────────────────────── */
+let currentIdx    = 0;
+let activeFilter  = 'all';
+let searchQuery   = '';
+let visibleIdxs   = PLAYERS.map((_, i) => i);   // indices currently showing
+
+/* ── FILTER DEFINITIONS ─────────────────────────────────────── */
+const FILTERS = [
+  { key: 'all',    label: 'ALL (17)' },
+  { key: 'rh',     label: 'RIGHT-HANDERS' },
+  { key: 'lh',     label: 'LEFT-HANDERS' },
+  { key: 'seam',   label: 'SEAM' },
+  { key: 'spin',   label: 'SPIN BUNNIES' },
+  { key: 'short',  label: 'SHORT BALL' },
+  { key: 'weapon', label: '⚔ WEAPONS' },
+];
+
+/* ── INIT ────────────────────────────────────────────────────── */
+function init() {
+  buildFilters();
+  buildSidebar();
+  selectPlayer(0, false);
+
+  document.getElementById('prev-btn').addEventListener('click', () => navigate(-1));
+  document.getElementById('next-btn').addEventListener('click', () => navigate(+1));
+  document.getElementById('search').addEventListener('input', onSearch);
+
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT') return;
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); navigate(-1); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown')  { e.preventDefault(); navigate(+1); }
+  });
+}
+
+/* ── BUILD FILTER BUTTONS ───────────────────────────────────── */
+function buildFilters() {
+  const wrap = document.getElementById('sb-filters');
+  FILTERS.forEach(f => {
+    const btn = document.createElement('button');
+    btn.className = 'fb' + (f.key === 'all' ? ' active' : '');
+    btn.textContent = f.label;
+    btn.dataset.filter = f.key;
+    btn.addEventListener('click', () => setFilter(f.key));
+    wrap.appendChild(btn);
+  });
+}
+
+/* ── BUILD SIDEBAR LIST ─────────────────────────────────────── */
+function buildSidebar() {
+  const list = document.getElementById('sb-list');
+  list.innerHTML = '';
+
+  const batsmen = PLAYERS.filter(p => !p.weapon);
+  const weapons = PLAYERS.filter(p =>  p.weapon);
+
+  appendGroup(list, 'BATSMEN WEAKNESSES', batsmen);
+  appendGroup(list, '⚔ WEAPON CARDS', weapons);
+}
+
+function appendGroup(list, label, players) {
+  if (!players.length) return;
+  const grp = document.createElement('div');
+  grp.className = 'sb-grp';
+  grp.textContent = label;
+  list.appendChild(grp);
+
+  players.forEach(p => {
+    const globalIdx = PLAYERS.indexOf(p);
+    const item = document.createElement('div');
+    item.className = 'sb-item';
+    item.style.setProperty('--ic', p.color);
+    item.dataset.idx = globalIdx;
+
+    const name = document.createElement('div');
+    name.className = 'sb-name';
+    name.textContent = p.name;
+    item.appendChild(name);
+
+    if (p.weapon) {
+      const b = mkBadge('⚔', 'bd-weapon');
+      item.appendChild(b);
+    } else if (p.hand === 'LH') {
+      item.appendChild(mkBadge('LH', 'bd-lh'));
+    }
+
+    if (p.tags.includes('spin'))  item.appendChild(mkBadge('SPIN', 'bd-spin'));
+    if (p.tags.includes('short')) item.appendChild(mkBadge('SHORT', 'bd-short'));
+
+    item.addEventListener('click', () => {
+      selectPlayer(globalIdx, true);
+    });
+
+    list.appendChild(item);
+  });
+}
+
+function mkBadge(text, cls) {
+  const b = document.createElement('span');
+  b.className = 'sb-badge ' + cls;
+  b.textContent = text;
+  return b;
+}
+
+/* ── FILTER LOGIC ───────────────────────────────────────────── */
+function setFilter(key) {
+  activeFilter = key;
+  document.querySelectorAll('.fb').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.filter === key);
+  });
+  applyFilters();
+}
+
+function onSearch(e) {
+  searchQuery = e.target.value.toUpperCase().trim();
+  applyFilters();
+}
+
+function applyFilters() {
+  visibleIdxs = [];
+  document.querySelectorAll('.sb-item').forEach(item => {
+    const idx = +item.dataset.idx;
+    const p   = PLAYERS[idx];
+    const filterMatch =
+      activeFilter === 'all'    ? true :
+      activeFilter === 'rh'     ? p.hand === 'RH' && !p.weapon :
+      activeFilter === 'lh'     ? p.hand === 'LH' && !p.weapon :
+      activeFilter === 'seam'   ? p.tags.includes('seam') :
+      activeFilter === 'spin'   ? p.tags.includes('spin') :
+      activeFilter === 'short'  ? p.tags.includes('short') :
+      activeFilter === 'weapon' ? p.weapon :
+      true;
+
+    const searchMatch = !searchQuery || p.name.includes(searchQuery) || p.sub.toUpperCase().includes(searchQuery);
+
+    if (filterMatch && searchMatch) {
+      item.classList.remove('hidden');
+      visibleIdxs.push(idx);
+    } else {
+      item.classList.add('hidden');
+    }
+  });
+
+  const count = visibleIdxs.length;
+  document.getElementById('sb-count').textContent =
+    count === 17 ? '17 PLAYER STUDIES' : `${count} OF 17 SHOWN`;
+
+  // If current player is now hidden, jump to first visible
+  if (!visibleIdxs.includes(currentIdx) && visibleIdxs.length > 0) {
+    selectPlayer(visibleIdxs[0], true);
+  }
+}
+
+/* ── NAVIGATION ─────────────────────────────────────────────── */
+function navigate(dir) {
+  if (!visibleIdxs.length) return;
+  const pos = visibleIdxs.indexOf(currentIdx);
+  const next = (pos + dir + visibleIdxs.length) % visibleIdxs.length;
+  selectPlayer(visibleIdxs[next], true);
+}
+
+/* ── SELECT PLAYER ──────────────────────────────────────────── */
+function selectPlayer(idx, animate) {
+  currentIdx = idx;
+  const p   = PLAYERS[idx];
+
+  // Update sidebar selection
+  document.querySelectorAll('.sb-item').forEach(item => {
+    item.classList.toggle('active', +item.dataset.idx === idx);
+  });
+
+  // Scroll sidebar item into view
+  const activeItem = document.querySelector(`.sb-item[data-idx="${idx}"]`);
+  if (activeItem) activeItem.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+  // Update CSS color
+  document.documentElement.style.setProperty('--pc', p.color);
+
+  // Glow background
+  const glow = document.getElementById('img-glow');
+  glow.style.background =
+    `radial-gradient(ellipse at center, ${p.color}18 0%, transparent 70%)`;
+
+  // Counter
+  const pos = visibleIdxs.indexOf(idx);
+  const countText = pos >= 0
+    ? `${pos + 1} / ${visibleIdxs.length}` + (visibleIdxs.length < 17 ? '' : '')
+    : `— / ${visibleIdxs.length}`;
+  document.getElementById('nav-count').textContent = countText;
+
+  // Header text
+  document.getElementById('mh-name').textContent = p.name;
+  document.getElementById('mh-sub').textContent  = p.sub;
+
+  // Header badges
+  const badgesEl = document.getElementById('mh-badges');
+  badgesEl.innerHTML = '';
+  if (p.weapon) {
+    badgesEl.appendChild(mkHdrBadge('⚔ WEAPON CARD', 'mhb-weapon'));
+  } else {
+    badgesEl.appendChild(mkHdrBadge(p.hand === 'LH' ? '◀ LEFT-HANDED' : 'RIGHT-HANDED ▶',
+                                    p.hand === 'LH' ? 'mhb-lh' : 'mhb-rh'));
+  }
+  if (p.tags.includes('spin'))  badgesEl.appendChild(mkHdrBadge('SPIN', 'mhb-spin'));
+  if (p.tags.includes('short')) badgesEl.appendChild(mkHdrBadge('SHORT BALL', 'mhb-short'));
+
+  // Info strip
+  document.getElementById('i-bowler').textContent   = p.bowler;
+  document.getElementById('i-series').textContent   = p.series;
+  document.getElementById('i-hand').textContent     = p.hand === 'LH' ? 'LEFT-HANDED' : 'RIGHT-HANDED';
+  document.getElementById('i-threat').textContent   = p.threat;
+  document.getElementById('i-stat').textContent     = p.keyStat;
+  document.getElementById('i-adapt').textContent    = p.adapt;
+  document.getElementById('i-analysis').textContent = p.analysis;
+
+  // Image
+  const img = document.getElementById('player-img');
+  if (animate) {
+    img.classList.add('fade');
+    setTimeout(() => {
+      img.src = p.file;
+      img.onload = () => img.classList.remove('fade');
+      // Fallback if already cached
+      if (img.complete && img.naturalWidth > 0) img.classList.remove('fade');
+    }, 160);
+  } else {
+    img.src = p.file;
+  }
+}
+
+function mkHdrBadge(text, cls) {
+  const el = document.createElement('span');
+  el.className = `mh-badge ${cls}`;
+  el.textContent = text;
+  return el;
+}
+
+/* ── START ───────────────────────────────────────────────────── */
+init();
+</script>
+</body>
+</html>
