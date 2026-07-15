@@ -405,6 +405,7 @@ main .section:nth-of-type(6) .tag { color: var(--green);  background: var(--gree
   gap: 16px;
   margin-top: auto;
   padding-top: 18px;
+  min-height: 64px;
 }
 .project-action-btn {
   font-size: 0.85rem;
