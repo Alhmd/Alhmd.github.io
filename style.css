@@ -402,10 +402,11 @@ main .section:nth-of-type(6) .tag { color: var(--green);  background: var(--gree
 .project-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   margin-top: auto;
   padding-top: 18px;
-  min-height: 64px;
+  min-height: 40px;
+  flex-wrap: nowrap;
 }
 .project-action-btn {
   font-size: 0.85rem;
