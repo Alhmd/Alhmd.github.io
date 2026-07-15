@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Brief — IPL Moneyball Analytics | Syed Alhmd Husain Kazmi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  :root { --brief-accent: var(--violet); --brief-soft: var(--violet-soft); }
+  body { background: var(--paper-alt); }
+  .brief-wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+  .brief-back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.9rem; font-weight: 600; margin-bottom: 28px; }
+  .brief-back:hover { color: var(--brief-accent); }
+  .brief-eyebrow { display: inline-block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brief-accent); background: var(--brief-soft); padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; }
+  .brief-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2rem; font-weight: 800; margin: 0 0 8px; color: var(--ink); }
+  .brief-sub { color: var(--muted); font-size: 1.05rem; margin: 0 0 36px; }
+  .brief-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 30px; margin-bottom: 20px; }
+  .brief-card h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 800; margin: 0 0 12px; color: var(--brief-accent); }
+  .brief-card p { margin: 0 0 10px; color: var(--ink); }
+  .brief-card p:last-child { margin-bottom: 0; }
+  .stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .stat-pill { background: var(--brief-soft); color: var(--brief-accent); font-weight: 700; font-size: 0.85rem; padding: 8px 14px; border-radius: 12px; }
+  .finding { border-left: 3px solid var(--brief-accent); padding: 10px 16px; margin: 12px 0; background: var(--brief-soft); border-radius: 0 10px 10px 0; }
+  .finding b { color: var(--ink); }
+  .limitations { border-left: 3px solid var(--amber); background: var(--amber-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .tag-pill { font-size: 0.8rem; font-weight: 600; color: var(--muted); background: var(--paper-alt); border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; }
+  .brief-actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .brief-actions a { font-weight: 700; font-size: 0.9rem; padding: 12px 22px; border-radius: 12px; }
+  .brief-actions .primary { background: var(--brief-accent); color: #fff; }
+  .brief-actions .secondary { border: 1px solid var(--line); color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="brief-wrap">
+  <a href="../../index.html#projects" class="brief-back">&larr; Back to Portfolio</a>
+  <span class="brief-eyebrow">Project Brief</span>
+  <h1 class="brief-title">IPL Moneyball — Finding Undervalued Players in Auction Data</h1>
+  <p class="brief-sub">A regression-based valuation model applying the sabermetrics "Moneyball" question to IPL auction data: does price track performance, or reputation?</p>
+
+  <div class="brief-card">
+    <h2>The Problem</h2>
+    <p>IPL franchises spend tens of millions of rupees per season bidding for players, but auction prices are driven by reputation, recent form, and bidding-war dynamics as much as by underlying on-field output. A franchise that can systematically identify players who are underpriced relative to their output gains a real competitive edge — the same data-driven scouting advantage made famous by the Oakland A's in baseball.</p>
+  </div>
+
+  <div class="brief-card">
+    <h2>The Data</h2>
+    <div class="stat-row">
+      <span class="stat-pill">295,732 real deliveries</span>
+      <span class="stat-pill">970 real auction records</span>
+      <span class="stat-pill">2007–2026</span>
+      <span class="stat-pill">64.0% match rate</span>
+    </div>
+    <p>Two genuinely independent real sources, merged: ball-by-ball performance data from Cricsheet.org, and IPL auction prices (2013–2022) from a Kaggle dataset. There's no shared player-ID registry between the two — Cricsheet uses "DA Warner," Kaggle uses "David Warner." Built a surname + year + initial disambiguation layer to join them, and reported the match rate (620 of 969 records, 64.0%) honestly rather than hiding the gap.</p>
+  </div>
+
+  <div class="brief-card">
+    <h2>The Approach</h2>
+    <p>Built a composite performance score per player-season (standardized batting runs + standardized bowling output), then regressed performance on log(auction price) to get each player-season's price-implied expected performance. The residual — actual minus expected — is z-scored across all eligible player-seasons to flag outliers in either direction.</p>
+    <p><b>A methodology correction made mid-build, not after:</b> the first version used a naive performance ÷ price ratio, which is mathematically dominated by the denominator and surfaces "cheap players," not genuinely undervalued skill. Replaced it with the regression-residual approach above — the actual mechanism real sabermetrics value-over-replacement metrics use.</p>
+  </div>
+
+  <div class="brief-card">
+    <h2>Key Findings</h2>
+    <div class="finding"><b>Robin Uthappa, 2014 — 3.1σ undervalued.</b> That was the season he won the IPL Orange Cap as the league's leading run-scorer — a fact the model had no knowledge of, arrived at purely from price and ball-by-ball data.</div>
+    <div class="finding"><b>Kane Williamson, 2018 — 3.7σ undervalued.</b> A real, recognizable standout season, independently corroborating the model.</div>
+    <div class="finding"><b>Virat Kohli's ₹21 Cr 2025 retention — +2.69σ.</b> Extending the model in v4 to cover retained icon players (not just auctioned ones), Kohli's retention price held up strongly against the auction-fitted expected-performance curve.</div>
+  </div>
+
+  <div class="brief-card">
+    <h2>Honest Limitations</h2>
+    <div class="limitations">The composite performance score is a transparent standardized blend, not a fully validated cricket impact metric. The 64% match rate means roughly a third of auction records couldn't be confidently linked to performance data — a real entity-resolution gap, not swept under the rug. Auction-only data structurally excludes long-tenured retained icon players from the base model (addressed separately in v4 for retention prices, with an explicit caveat that retention isn't set by competitive bidding the way auction price is).</div>
+  </div>
+
+  <div class="brief-card">
+    <h2>Stack</h2>
+    <div class="tag-row">
+      <span class="tag-pill">Python</span>
+      <span class="tag-pill">Pandas</span>
+      <span class="tag-pill">NumPy</span>
+      <span class="tag-pill">Regression / OLS</span>
+      <span class="tag-pill">Streamlit</span>
+      <span class="tag-pill">Plotly</span>
+    </div>
+  </div>
+
+  <div class="brief-actions">
+    <a href="index.html" class="primary">View Live Demo &rarr;</a>
+    <a href="https://github.com/Alhmd/ipl-moneyball" target="_blank" rel="noopener" class="secondary">GitHub Repo</a>
+  </div>
+</div>
+</body>
+</html>

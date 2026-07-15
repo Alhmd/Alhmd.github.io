@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Brief — Cricket Analytics Visualization Suite | Syed Alhmd Husain Kazmi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  :root { --brief-accent: var(--coral); --brief-soft: var(--coral-soft); }
+  body { background: var(--paper-alt); }
+  .brief-wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+  .brief-back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.9rem; font-weight: 600; margin-bottom: 28px; }
+  .brief-back:hover { color: var(--brief-accent); }
+  .brief-eyebrow { display: inline-block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brief-accent); background: var(--brief-soft); padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; }
+  .brief-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2rem; font-weight: 800; margin: 0 0 8px; color: var(--ink); }
+  .brief-sub { color: var(--muted); font-size: 1.05rem; margin: 0 0 36px; }
+  .brief-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 30px; margin-bottom: 20px; }
+  .brief-card h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 800; margin: 0 0 12px; color: var(--brief-accent); }
+  .brief-card p { margin: 0 0 10px; color: var(--ink); }
+  .brief-card p:last-child { margin-bottom: 0; }
+  .stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .stat-pill { background: var(--brief-soft); color: var(--brief-accent); font-weight: 700; font-size: 0.85rem; padding: 8px 14px; border-radius: 12px; }
+  .panel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 8px; }
+  .panel { background: var(--brief-soft); border-radius: 12px; padding: 14px; }
+  .panel b { display: block; color: var(--ink); font-size: 0.88rem; margin-bottom: 4px; }
+  .panel span { font-size: 0.82rem; color: var(--muted); }
+  .player-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .player-pill { font-size: 0.8rem; font-weight: 600; color: var(--muted); background: var(--paper-alt); border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .tag-pill { font-size: 0.8rem; font-weight: 600; color: var(--muted); background: var(--paper-alt); border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; }
+  .brief-actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .brief-actions a { font-weight: 700; font-size: 0.9rem; padding: 12px 22px; border-radius: 12px; }
+  .brief-actions .primary { background: var(--brief-accent); color: #fff; }
+  .brief-actions .secondary { border: 1px solid var(--line); color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="brief-wrap">
+  <a href="../../index.html#projects" class="brief-back">&larr; Back to Portfolio</a>
+  <span class="brief-eyebrow">Project Brief</span>
+  <h1 class="brief-title">Cricket Analytics — How Bowlers Crack Great Batsmen (and How They Fight Back)</h1>
+  <p class="brief-sub">A visualization suite decoding dismissal patterns for elite international batsmen — where the danger balls land, and why.</p>
+
+  <div class="brief-card">
+    <h2>The Problem</h2>
+    <p>Commentary on a batsman's "weakness" is usually vague — "struggles against the short ball," "vulnerable early." This project asks a sharper question: for a given batsman, can dismissal and danger-delivery data be turned into a precise, visual map of exactly where a bowler needs to land the ball, and how the batsman has actually gotten out historically?</p>
+  </div>
+
+  <div class="brief-card">
+    <h2>The Approach — Three Panels per Player</h2>
+    <div class="panel-grid">
+      <div class="panel"><b>Pitch Map</b><span>Top-down heatmap of where danger deliveries land — line and length.</span></div>
+      <div class="panel"><b>Front View</b><span>Batsman's-eye view: ball line and height relative to the stumps.</span></div>
+      <div class="panel"><b>Catching Zone</b><span>Bird's-eye field map showing where dismissals actually cluster.</span></div>
+    </div>
+    <p style="margin-top:14px;">Built a coordinate system translating raw line, length, height, and field-angle values into a consistent, publication-ready chart for every player — including automatic mirroring of off/leg side for left-handers, so the same visual language works across the whole set.</p>
+  </div>
+
+  <div class="brief-card">
+    <h2>Coverage</h2>
+    <div class="stat-row">
+      <span class="stat-pill">17 players</span>
+      <span class="stat-pill">3 panels each</span>
+      <span class="stat-pill">51 charts total</span>
+    </div>
+    <div class="player-row">
+      <span class="player-pill">Virat Kohli</span>
+      <span class="player-pill">Steve Smith</span>
+      <span class="player-pill">Rohit Sharma</span>
+      <span class="player-pill">Ben Stokes</span>
+      <span class="player-pill">David Warner</span>
+      <span class="player-pill">Ricky Ponting</span>
+      <span class="player-pill">Shubman Gill</span>
+      <span class="player-pill">Yashasvi Jaiswal</span>
+      <span class="player-pill">Wasim Akram</span>
+      <span class="player-pill">Lasith Malinga</span>
+      <span class="player-pill">+ 7 more</span>
+    </div>
+  </div>
+
+  <div class="brief-card">
+    <h2>Stack</h2>
+    <div class="tag-row">
+      <span class="tag-pill">Python</span>
+      <span class="tag-pill">Matplotlib</span>
+      <span class="tag-pill">HTML / CSS</span>
+    </div>
+  </div>
+
+  <div class="brief-actions">
+    <a href="index.html" class="primary">View Live Demo &rarr;</a>
+    <a href="https://github.com/Alhmd/cricket-analytics" target="_blank" rel="noopener" class="secondary">GitHub Repo</a>
+  </div>
+</div>
+</body>
+</html>

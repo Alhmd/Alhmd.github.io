@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Brief — India Fuel &amp; EV Transition Dashboard | Syed Alhmd Husain Kazmi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../style.css">
+<style>
+  :root { --brief-accent: var(--amber); --brief-soft: var(--amber-soft); }
+  body { background: var(--paper-alt); }
+  .brief-wrap { max-width: 760px; margin: 0 auto; padding: 48px 24px 80px; }
+  .brief-back { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 0.9rem; font-weight: 600; margin-bottom: 28px; }
+  .brief-back:hover { color: var(--brief-accent); }
+  .brief-eyebrow { display: inline-block; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brief-accent); background: var(--brief-soft); padding: 5px 12px; border-radius: 999px; margin-bottom: 14px; }
+  .brief-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 2rem; font-weight: 800; margin: 0 0 8px; color: var(--ink); }
+  .brief-sub { color: var(--muted); font-size: 1.05rem; margin: 0 0 36px; }
+  .brief-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 30px; margin-bottom: 20px; }
+  .brief-card h2 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 800; margin: 0 0 12px; color: var(--brief-accent); }
+  .brief-card p { margin: 0 0 10px; color: var(--ink); }
+  .brief-card p:last-child { margin-bottom: 0; }
+  .stat-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 6px 0 4px; }
+  .stat-pill { background: var(--brief-soft); color: var(--brief-accent); font-weight: 700; font-size: 0.85rem; padding: 8px 14px; border-radius: 12px; }
+  .finding { border-left: 3px solid var(--brief-accent); padding: 10px 16px; margin: 12px 0; background: var(--brief-soft); border-radius: 0 10px 10px 0; }
+  .finding b { color: var(--ink); }
+  .quad-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+  .quad { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+  .quad b { display: block; font-size: 0.88rem; margin-bottom: 3px; color: var(--ink); }
+  .quad span { font-size: 0.8rem; color: var(--muted); }
+  .limitations { border-left: 3px solid var(--coral); background: var(--coral-soft); border-radius: 0 10px 10px 0; padding: 12px 16px; }
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .tag-pill { font-size: 0.8rem; font-weight: 600; color: var(--muted); background: var(--paper-alt); border: 1px solid var(--line); padding: 5px 12px; border-radius: 999px; }
+  .brief-actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .brief-actions a { font-weight: 700; font-size: 0.9rem; padding: 12px 22px; border-radius: 12px; }
+  .brief-actions .primary { background: var(--brief-accent); color: #fff; }
+  .brief-actions .secondary { border: 1px solid var(--line); color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="brief-wrap">
+  <a href="../../index.html#projects" class="brief-back">&larr; Back to Portfolio</a>
+  <span class="brief-eyebrow">Project Brief</span>
+  <h1 class="brief-title">India Fuel &amp; EV Transition Dashboard</h1>
+  <p class="brief-sub">A state-level dashboard tracking India's shift from petrol to electric vehicles — and why absolute numbers alone hide the real story.</p>
+
+  <div class="brief-card">
+    <h2>The Problem</h2>
+    <p>India's EV transition is usually reported in absolute numbers — which state has the most EVs, which consumes the most fuel. But absolute figures conflate population size with actual behavior. A state can look "fuel dependent" simply because it has more people, or look like an EV leader simply because it counts e-rickshaws the same way it counts electric cars. This dashboard normalizes for population and vehicle mix to find the real pattern underneath.</p>
+  </div>
+
+  <div class="brief-card">
+    <h2>The Data</h2>
+    <p>State-level petrol consumption (2008–09 through 2024–25), population, total registered vehicles, and EV registrations, merged and normalized into per-capita consumption and EV-penetration metrics per state.</p>
+    <div class="stat-row">
+      <span class="stat-pill">3.6× growth, 2008–2026</span>
+      <span class="stat-pill">10 states ≈ 70% of demand</span>
+    </div>
+  </div>
+
+  <div class="brief-card">
+    <h2>Key Finding — The UP Paradox</h2>
+    <div class="finding"><b>Uttar Pradesh is #1 in absolute petrol consumption</b> (4,833 thousand MT) <b>but drops to #10 per capita</b> once its 241M population is accounted for. <b>Kerala flips the pattern entirely</b> — #8 in absolute terms, but <b>#1 per capita</b>. A Keralite consumes several times more petrol per person than a UP resident, a fact invisible in the raw absolute ranking.</div>
+  </div>
+
+  <div class="brief-card">
+    <h2>The Four Quadrants</h2>
+    <p>States classified by median petrol-per-capita vs. median EV penetration:</p>
+    <div class="quad-grid">
+      <div class="quad"><b>Transitioning</b><span>High petrol use, high EV adoption</span></div>
+      <div class="quad"><b>Leapfrogging</b><span>Low petrol use, high EV adoption</span></div>
+      <div class="quad"><b>Fuel Dependent</b><span>High petrol use, low EV adoption</span></div>
+      <div class="quad"><b>Low Mobility</b><span>Low petrol use, low EV adoption</span></div>
+    </div>
+  </div>
+
+  <div class="brief-card">
+    <h2>Honest Limitation — The UP Caveat</h2>
+    <div class="limitations">UP's 4.7% EV penetration looks like strong "Leapfrogging" progress — but it's dominated by e-rickshaws, a completely different vehicle category from petrol cars. Strip e-rickshaws out and UP likely lands in "Low Mobility," not "Leapfrogging." This isn't a rounding error to smooth over — e-rickshaw electrification and 4-wheeler EV adoption need genuinely different policy interventions, and collapsing them into one number would mislead anyone using this data to make a decision.</div>
+  </div>
+
+  <div class="brief-card">
+    <h2>Stack</h2>
+    <div class="tag-row">
+      <span class="tag-pill">Python</span>
+      <span class="tag-pill">Pandas</span>
+      <span class="tag-pill">Streamlit</span>
+      <span class="tag-pill">Plotly</span>
+    </div>
+  </div>
+
+  <div class="brief-actions">
+    <a href="index.html" class="primary">View Live Demo &rarr;</a>
+    <a href="https://github.com/Alhmd/india-fuel-ev" target="_blank" rel="noopener" class="secondary">GitHub Repo</a>
+  </div>
+</div>
+</body>
+</html>

@@ -11,6 +11,16 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 // Footer year
 document.getElementById('year').textContent = new Date().getFullYear();
 
+// Hide nav on scroll down, show on scroll up (glass header stays put near top)
+let lastScroll = 0;
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  const currentScroll = window.pageYOffset;
+  navbar.style.transform = (currentScroll > lastScroll && currentScroll > 80)
+    ? 'translateY(-100%)' : 'translateY(0)';
+  lastScroll = currentScroll;
+});
+
 // No scroll-reveal animation: content is visible unconditionally by
 // default (see CSS). A previous version hid content until scrolled
 // into view via IntersectionObserver, but that left everything blank
